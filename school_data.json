@@ -8,6 +8,13 @@
             "grades": {
                 "maths": 60.0
             }
+        },
+        {
+            "name": "Kashif",
+            "age": 25,
+            "email": "kashif09@gmail.com",
+            "roll_no": "2",
+            "grades": {}
         }
     ],
     "teachers": [
