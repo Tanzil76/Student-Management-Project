@@ -5,8 +5,9 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 
+# ----------------------------------------------------------------------------
 # Persistence
-
+# ----------------------------------------------------------------------------
 DATABASE = "school_data.json"
 
 
@@ -30,10 +31,10 @@ if "data" not in st.session_state:
 data = st.session_state.data
 
 
-
+# ----------------------------------------------------------------------------
 # Domain classes (same logic as the original script, adapted for Streamlit
-# forms instead of blocking input() calls)
-
+# widgets instead of blocking input() calls)
+# ----------------------------------------------------------------------------
 class Persons(ABC):
     @abstractmethod
     def get_role(self):
@@ -101,52 +102,111 @@ class Teacher(Persons):
 stud = Student()
 tech = Teacher()
 
-
+# ----------------------------------------------------------------------------
 # Page config & styling
-
+# ----------------------------------------------------------------------------
 st.set_page_config(page_title="School Manager", page_icon="🎓", layout="wide")
 
 st.markdown(
     """
     <style>
         .main { background-color: #f7f8fb; }
-        div.block-container { padding-top: 2rem; }
-        .app-title {
-            font-size: 2.1rem;
-            font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 0;
+
+        div.block-container {
+            padding-top: 1.5rem;
+            padding-bottom: 3rem;
+            max-width: 1200px;
         }
-        .app-subtitle {
-            color: #6b7280;
-            margin-top: 0.1rem;
-            margin-bottom: 1.5rem;
+
+        /* ---- Header banner ---- */
+        .header-banner {
+            width: 100%;
+            box-sizing: border-box;
+            display: block;
+            background: linear-gradient(120deg, #4f46e5 0%, #6366f1 45%, #818cf8 100%);
+            border-radius: 18px;
+            padding: 2rem 2.4rem;
+            margin-bottom: 1.8rem;
+            box-shadow: 0 8px 24px rgba(79, 70, 229, 0.25);
         }
+        .header-banner h1 {
+            color: #ffffff !important;
+            font-size: 2.3rem;
+            font-weight: 800;
+            margin: 0;
+            line-height: 1.3;
+            white-space: normal;
+            overflow: visible;
+            text-overflow: unset;
+            word-break: normal;
+            max-width: 100%;
+        }
+        .header-banner p {
+            color: #e0e7ff !important;
+            font-size: 1.02rem;
+            margin: 0.5rem 0 0 0;
+            white-space: normal;
+        }
+
+        /* ---- Metric cards ---- */
         .metric-card {
             background: white;
-            border-radius: 14px;
-            padding: 1.1rem 1.3rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            border-radius: 16px;
+            padding: 1.3rem 1.4rem;
+            box-shadow: 0 2px 10px rgba(17, 24, 39, 0.06);
             border: 1px solid #eef0f3;
+            height: 100%;
         }
+        .metric-card [data-testid="stMetricValue"] {
+            color: #1f2937;
+        }
+        .metric-card [data-testid="stMetricLabel"] {
+            color: #6b7280;
+        }
+
+        /* ---- Form / content cards ---- */
+        .form-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.6rem 1.9rem;
+            box-shadow: 0 2px 10px rgba(17, 24, 39, 0.06);
+            border: 1px solid #eef0f3;
+            margin-bottom: 1rem;
+        }
+
+        h3 { color: #1f2937 !important; }
+
         .stButton>button {
-            border-radius: 8px;
+            border-radius: 10px;
             font-weight: 600;
+            background: linear-gradient(120deg, #4f46e5, #6366f1);
+            color: white;
+            border: none;
+            padding: 0.55rem 1rem;
         }
+        .stButton>button:hover {
+            background: linear-gradient(120deg, #4338ca, #4f46e5);
+            color: white;
+        }
+
+        /* ---- Sidebar ---- */
         section[data-testid="stSidebar"] {
             background-color: #111827;
         }
         section[data-testid="stSidebar"] * {
             color: #f3f4f6 !important;
         }
+        section[data-testid="stSidebar"] .stRadio > label {
+            font-weight: 600;
+        }
     </style>
     """,
     unsafe_allow_html=True,
 )
 
-
+# ----------------------------------------------------------------------------
 # Sidebar navigation
-
+# ----------------------------------------------------------------------------
 with st.sidebar:
     st.markdown("## 🎓 School Manager")
     st.caption("Students • Teachers • Grades")
@@ -165,12 +225,22 @@ with st.sidebar:
     st.divider()
     st.caption(f"Data file: `{DATABASE}`")
 
-st.markdown('<p class="app-title">School Management System</p>', unsafe_allow_html=True)
-st.markdown('<p class="app-subtitle">A simple, friendly dashboard for managing students, teachers and grades.</p>', unsafe_allow_html=True)
+# ----------------------------------------------------------------------------
+# Header banner (full-width, wraps naturally, never clipped)
+# ----------------------------------------------------------------------------
+st.markdown(
+    """
+    <div class="header-banner">
+        <h1>School Management System</h1>
+        <p>A simple, friendly dashboard for managing students, teachers and grades.</p>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
-
+# ----------------------------------------------------------------------------
 # Dashboard
-
+# ----------------------------------------------------------------------------
 if page == "📊 Dashboard":
     col1, col2, col3 = st.columns(3)
     total_students = len(data["students"])
@@ -230,10 +300,11 @@ if page == "📊 Dashboard":
         else:
             st.info("No teachers registered yet.")
 
-
+# ----------------------------------------------------------------------------
 # Register Student
-
+# ----------------------------------------------------------------------------
 elif page == "📝 Register Student":
+    st.markdown('<div class="form-card">', unsafe_allow_html=True)
     st.subheader("Register a new student")
     with st.form("register_student_form", clear_on_submit=True):
         c1, c2 = st.columns(2)
@@ -244,6 +315,7 @@ elif page == "📝 Register Student":
             email = st.text_input("Email")
             roll_no = st.text_input("Roll number")
         submitted = st.form_submit_button("Register Student", use_container_width=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
     if submitted:
         if not name or not roll_no or not email:
@@ -252,10 +324,11 @@ elif page == "📝 Register Student":
             ok, msg = stud.register(name, int(age), email, roll_no)
             st.success(msg) if ok else st.error(msg)
 
-
+# ----------------------------------------------------------------------------
 # Register Teacher
-
+# ----------------------------------------------------------------------------
 elif page == "👨‍🏫 Register Teacher":
+    st.markdown('<div class="form-card">', unsafe_allow_html=True)
     st.subheader("Register a new teacher")
     with st.form("register_teacher_form", clear_on_submit=True):
         c1, c2 = st.columns(2)
@@ -267,6 +340,7 @@ elif page == "👨‍🏫 Register Teacher":
             email = st.text_input("Email")
             emp_id = st.text_input("Employee ID")
         submitted = st.form_submit_button("Register Teacher", use_container_width=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
     if submitted:
         if not name or not emp_id or not email or not subject:
@@ -275,10 +349,11 @@ elif page == "👨‍🏫 Register Teacher":
             ok, msg = tech.register(name, int(age), email, subject, emp_id)
             st.success(msg) if ok else st.error(msg)
 
-
+# ----------------------------------------------------------------------------
 # Add Grade
-
+# ----------------------------------------------------------------------------
 elif page == "✏️ Add Grade":
+    st.markdown('<div class="form-card">', unsafe_allow_html=True)
     st.subheader("Add a grade for a student")
     if not data["students"]:
         st.info("No students registered yet. Register a student first.")
@@ -292,25 +367,31 @@ elif page == "✏️ Add Grade":
             with c2:
                 marks = st.number_input("Marks", min_value=0.0, max_value=100.0, step=0.5)
             submitted = st.form_submit_button("Add Grade", use_container_width=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
-        if submitted:
-            if not subject:
-                st.error("Please enter a subject.")
-            else:
-                ok, msg = stud.add_grade(roll_options[selected], subject, marks)
-                st.success(msg) if ok else st.error(msg)
+    if data["students"] and submitted:
+        if not subject:
+            st.error("Please enter a subject.")
+        else:
+            ok, msg = stud.add_grade(roll_options[selected], subject, marks)
+            st.success(msg) if ok else st.error(msg)
 
-
+# ----------------------------------------------------------------------------
 # Student Details
-
+# ----------------------------------------------------------------------------
 elif page == "🔍 Student Details":
+    st.markdown('<div class="form-card">', unsafe_allow_html=True)
     st.subheader("Look up a student")
     roll_no = st.text_input("Enter roll number")
-    if st.button("Search", use_container_width=True) and roll_no:
+    search = st.button("Search", use_container_width=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    if search and roll_no:
         s = stud.find(roll_no)
         if s:
             grades = s["grades"]
             avg = sum(grades.values()) / len(grades) if grades else 0
+            st.markdown('<div class="form-card">', unsafe_allow_html=True)
             c1, c2, c3 = st.columns(3)
             c1.metric("Name", s["name"])
             c2.metric("Roll No", s["roll_no"])
@@ -325,22 +406,29 @@ elif page == "🔍 Student Details":
                 )
             else:
                 st.info("No grades recorded yet.")
+            st.markdown("</div>", unsafe_allow_html=True)
         else:
             st.error("Student not found.")
 
-
+# ----------------------------------------------------------------------------
 # Teacher Details
-
+# ----------------------------------------------------------------------------
 elif page == "🔎 Teacher Details":
+    st.markdown('<div class="form-card">', unsafe_allow_html=True)
     st.subheader("Look up a teacher")
     emp_id = st.text_input("Enter employee ID")
-    if st.button("Search", use_container_width=True) and emp_id:
+    search = st.button("Search", use_container_width=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    if search and emp_id:
         t = tech.find(emp_id)
         if t:
+            st.markdown('<div class="form-card">', unsafe_allow_html=True)
             c1, c2, c3 = st.columns(3)
             c1.metric("Name", t["name"])
             c2.metric("Emp ID", t["emp_id"])
             c3.metric("Subject", t["subject"])
             st.write(f"**Age:** {t['age']}  \n**Email:** {t['email']}")
+            st.markdown("</div>", unsafe_allow_html=True)
         else:
             st.error("Teacher not found.")
