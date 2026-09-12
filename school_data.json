@@ -5,8 +5,18 @@
             "age": 23,
             "email": "tanzil98@gamil.com",
             "roll_no": "1",
-            "grades": {}
+            "grades": {
+                "maths": 60.0
+            }
         }
     ],
-    "teachers": []
+    "teachers": [
+        {
+            "name": "Kaif",
+            "age": 23,
+            "email": "kaif2@gmail.com",
+            "subject": "maths",
+            "emp_id": "1"
+        }
+    ]
 }
