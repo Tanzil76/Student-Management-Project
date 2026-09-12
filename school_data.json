@@ -1,0 +1,12 @@
+{
+    "students": [
+        {
+            "name": "Tanzil",
+            "age": 23,
+            "email": "tanzil98@gamil.com",
+            "roll_no": "1",
+            "grades": {}
+        }
+    ],
+    "teachers": []
+}
