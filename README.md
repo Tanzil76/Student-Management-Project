@@ -23,6 +23,7 @@ The project follows clean object-oriented principles:
 - `Persons` — an abstract base class defining the shared interface (`get_role`) and a static `validate_email` helper
 - `Student` — handles registration, grade tracking, and lookups for students
 - `Teacher` — handles registration and lookups for teachers
-This is User Interface of webpage-:
+  
+ This is User Interface of webpage-:
 
 <img width="958" height="415" alt="image" src="https://github.com/user-attachments/assets/c9baebd2-fc3b-45bd-aaa2-7582c7e39a26" />
